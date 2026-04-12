@@ -526,7 +526,8 @@ button.action-btn:hover{background:var(--accent-light);color:var(--accent);borde
 //  Não coloque a senha em repositório público!
 //  Use uma senha forte: letras, números, símbolos.
 // ══════════════════════════════════════════════
-const ADMIN_PASSWORD = 'TRE@2024';  // ← ALTERE AQUI
+localStorage.clear(); // limpa config antiga
+const ADMIN_PASSWORD = 'ATAS@2026';  // ← ALTERE AQUI
 
 const CFG_KEY = 'tre_ma_fb_v2';
 let ATAS = [], AQUISICOES = [], db = null, isAdmin = false, useLocal = false;

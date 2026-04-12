@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atas & Aquisições — TRE-MA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f0f4f9;
+  --white:#ffffff;
+  --surface:#f8fafc;
+  --border:#e2e8f0;
+  --border2:#cbd5e1;
+  --text:#0f172a;
+  --text2:#334155;
+  --muted:#64748b;
+  --muted2:#94a3b8;
+  --accent:#2563eb;
+  --accent-light:#eff6ff;
+  --accent-mid:#bfdbfe;
+  --green:#16a34a;
+  --green-light:#f0fdf4;
+  --green-mid:#bbf7d0;
+  --amber:#d97706;
+  --amber-light:#fffbeb;
+  --amber-mid:#fde68a;
+  --red:#dc2626;
+  --red-light:#fef2f2;
+  --red-mid:#fecaca;
+  --purple:#7c3aed;
+  --purple-light:#faf5ff;
+  --font-d:'Plus Jakarta Sans',sans-serif;
+  --font-b:'Inter',sans-serif;
+  --sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh2:0 4px 16px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.05);
+  --r:10px;--r-lg:14px;--r-xl:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;box-shadow:var(--sh)}
+.topbar-left{display:flex;align-items:center;gap:.9rem}
+.emblem{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:11px;color:#fff;letter-spacing:.3px;line-height:1.15;text-align:center;flex-shrink:0}
+.org-name{font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.org-name span{color:var(--accent)}
+.org-sub{font-size:11px;color:var(--muted);margin-top:0}
+.topbar-right{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.resp-chip{display:flex;align-items:center;gap:8px;background:var(--purple-light);border:1px solid #e9d5ff;border-radius:100px;padding:4px 12px 4px 6px}
+.resp-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:700;font-size:10px;color:#fff;flex-shrink:0}
+.resp-label{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--purple);display:block;line-height:1}
+.resp-name{font-size:12px;font-weight:600;color:#6d28d9;line-height:1.3}
+.live-chip{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--green);background:var(--green-light);border:1px solid var(--green-mid);padding:4px 10px;border-radius:100px}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.date-tag{font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:4px 10px;border-radius:100px}
+.admin-btn{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--amber);background:var(--amber-light);border:1px solid var(--amber-mid);padding:4px 12px;border-radius:100px;cursor:pointer;font-family:var(--font-b);transition:all .2s}
+.admin-btn:hover{background:#fef3c7}
+.admin-btn.logged{color:var(--green);background:var(--green-light);border-color:var(--green-mid)}
+
+/* ── LOADING ── */
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:1rem}
+.spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading-screen p{font-size:13px;color:var(--muted)}
+
+/* ── TABS ── */
+.tabs{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;overflow-x:auto;gap:0}
+.tab{padding:.75rem 1.2rem;border:none;background:transparent;color:var(--muted);font-family:var(--font-b);font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab-count{background:var(--bg);color:var(--muted);font-size:10px;padding:1px 7px;border-radius:100px;border:1px solid var(--border)}
+.tab.active .tab-count{background:var(--accent-light);color:var(--accent);border-color:var(--accent-mid)}
+
+/* ── MAIN ── */
+.main{padding:1.75rem 2rem}
+.section{display:none}.section.active{display:block}
+
+/* ── PAGE HEADER ── */
+.page-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.page-hdr h2{font-family:var(--font-d);font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.4px}
+.page-hdr p{font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.85rem;margin-bottom:1.5rem}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.1rem 1.3rem;box-shadow:var(--sh);position:relative;overflow:hidden}
+.kpi-accent{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:2px 0 0 2px}
+.kpi-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:.5rem}
+.kpi-value{font-family:var(--font-d);font-size:21px;font-weight:800;line-height:1;color:var(--text)}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:.4rem}
+
+/* ── CONTROLS ── */
+.controls{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:1.2rem}
+.sw{flex:1;min-width:220px;position:relative}
+.sw input{width:100%;padding:.5rem .8rem .5rem 2.2rem;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-b);font-size:13px;outline:none;transition:border-color .2s;box-shadow:var(--sh)}
+.sw input:focus{border-color:var(--accent)}
+.sw input::placeholder{color:var(--muted2)}
+.si{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--muted2);font-size:15px;pointer-events:none}
+select{padding:.5rem 2rem .5rem .8rem;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:var(--font-b);font-size:13px;outline:none;cursor:pointer;appearance:none;box-shadow:var(--sh);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .7rem center}
+.results-bar{padding:.55rem 1rem;background:var(--white);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.results-bar strong{color:var(--text2);font-weight:600}
+
+/* ── TABLE CARD ── */
+.table-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh);overflow:hidden}
+.table-hdr{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.3rem;border-bottom:1px solid var(--border)}
+.table-hdr-title{font-family:var(--font-d);font-size:13px;font-weight:700;color:var(--text2)}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:.65rem 1rem;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8faff}
+tbody td{padding:.85rem 1rem;vertical-align:middle;color:var(--text2)}
+td.dim{color:var(--muted)}
+td.mono{font-family:monospace;font-size:11px;color:var(--muted)}
+
+/* ── EXPAND ROW ── */
+.expand-row{display:none}
+.expand-row.open{display:table-row}
+.expand-row td{padding:0;border-bottom:1px solid var(--border)}
+.expand-inner{padding:1.2rem 1.4rem;background:#f8faff;border-top:2px solid var(--accent-mid)}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:100px;font-size:11px;font-weight:500;white-space:nowrap;border:1px solid transparent}
+.b-green{background:var(--green-light);color:var(--green);border-color:var(--green-mid)}
+.b-amber{background:var(--amber-light);color:var(--amber);border-color:var(--amber-mid)}
+.b-red{background:var(--red-light);color:var(--red);border-color:var(--red-mid)}
+.b-blue{background:var(--accent-light);color:var(--accent);border-color:var(--accent-mid)}
+.b-purple{background:var(--purple-light);color:var(--purple);border-color:#e9d5ff}
+.b-gray{background:var(--surface);color:var(--muted);border-color:var(--border)}
+
+/* ── PROGRESS ── */
+.prog-wrap{display:flex;align-items:center;gap:7px;min-width:110px}
+.prog-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s}
+.prog-pct{font-size:11px;color:var(--muted);min-width:30px;text-align:right;font-weight:600}
+
+/* ── EXPAND DETAIL ── */
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.85rem;margin-bottom:1.1rem}
+.exp-field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:3px}
+.exp-field p{font-size:14px;color:var(--text);font-weight:500}
+.exp-section-title{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:.7rem;font-weight:600}
+.pedidos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+.pedido-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:.85rem 1rem;box-shadow:var(--sh)}
+.pedido-num{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:.45rem;font-weight:600}
+.pedido-qtd{font-family:var(--font-d);font-size:22px;font-weight:800;line-height:1}
+.pedido-val{font-size:12px;color:var(--muted);margin-top:4px}
+.pedido-saldo{font-size:11px;margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.saldo-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1rem;flex-wrap:wrap;box-shadow:var(--sh)}
+.saldo-box label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);display:block;margin-bottom:3px;font-weight:600}
+.saldo-num{font-family:var(--font-d);font-size:22px;font-weight:800}
+.saldo-sub{font-size:11px;color:var(--muted)}
+
+/* ── ATA CARDS (dashboard only) ── */
+.ata-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.85rem;margin-bottom:1.5rem}
+.ata-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.1rem 1.2rem;box-shadow:var(--sh);border-top:3px solid var(--accent);transition:box-shadow .2s}
+.ata-card:hover{box-shadow:var(--sh2)}
+.ata-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.85rem}
+.ata-num{font-family:var(--font-d);font-size:15px;font-weight:800;color:var(--text)}
+.ata-empresa{font-size:12px;color:var(--muted);margin-top:2px}
+.ata-sei{font-size:10px;color:var(--muted2);font-family:monospace;margin-top:1px}
+.ata-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)}
+.ata-row:last-child{border-bottom:none}
+.ata-key{color:var(--muted)}
+.ata-val{font-weight:600;color:var(--text2)}
+.ata-prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;margin-top:.6rem}
+
+/* ── DASHBOARD ── */
+.dash-cols{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.dash-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh);overflow:hidden}
+.dash-card-head{padding:.9rem 1.2rem;border-bottom:1px solid var(--border);font-family:var(--font-d);font-size:13px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:.5rem}
+.dash-item{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.2rem;border-bottom:1px solid var(--border);gap:.5rem}
+.dash-item:last-child{border-bottom:none}
+.dash-item-label{font-size:13px;font-weight:500;color:var(--text2)}
+.dash-item-sub{font-size:11px;color:var(--muted)}
+.dash-item-val{font-size:13px;font-weight:700;text-align:right;flex-shrink:0}
+
+/* ── OVERLAY / MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:300;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(3px)}
+.overlay.open{display:flex}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.8rem;max-width:680px;width:100%;max-height:88vh;overflow-y:auto;position:relative;box-shadow:var(--sh2)}
+.modal-x{position:absolute;top:.9rem;right:.9rem;background:var(--surface);border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-x:hover{background:var(--red-light);color:var(--red);border-color:var(--red-mid)}
+.modal-tag{font-size:11px;color:var(--accent);font-weight:600;margin-bottom:4px}
+.modal-title{font-family:var(--font-d);font-size:19px;font-weight:800;color:var(--text);margin-bottom:2px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:1.4rem}
+.divider{border:none;border-top:1px solid var(--border);margin:1.1rem 0}
+
+/* ── ADMIN ── */
+.admin-modal{max-width:820px}
+.admin-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.4rem}
+.admin-tab{padding:.55rem 1rem;border:none;background:transparent;color:var(--muted);font-family:var(--font-b);font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.admin-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.admin-section{display:none}.admin-section.active{display:block}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.9rem}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600}
+.fg input,.fg select,.fg textarea{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-b);font-size:13px;padding:.45rem .7rem;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);background:var(--white)}
+.fg textarea{resize:vertical;min-height:56px}
+.btn{padding:.5rem 1.1rem;border-radius:8px;border:none;font-family:var(--font-b);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#1d4ed8}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid)}.btn-danger:hover{background:#fee2e2}
+.btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
+.admin-list{display:flex;flex-direction:column;gap:.4rem;max-height:300px;overflow-y:auto}
+.alist-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.alist-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text2)}
+.alist-sub{font-size:11px;color:var(--muted)}
+.icon-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s}
+.icon-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-light)}
+.icon-btn.del:hover{color:var(--red);border-color:var(--red-mid);background:var(--red-light)}
+
+/* ── LOGIN ── */
+.login-modal{max-width:360px}
+.login-error{font-size:12px;color:var(--red);margin-top:.45rem;display:none}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:.7rem 1.1rem;font-size:13px;font-weight:500;z-index:999;display:none;gap:8px;align-items:center;box-shadow:var(--sh2)}
+.toast.show{display:flex;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ── ACTION BTN ── */
+button.action-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 11px;border-radius:7px;cursor:pointer;font-size:12px;font-family:var(--font-b);font-weight:500;transition:all .2s}
+button.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:var(--accent-mid)}
+
+/* ── SETUP ── */
+.setup-wrap{max-width:600px;margin:3rem auto;background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:2rem;box-shadow:var(--sh2)}
+.setup-wrap h2{font-family:var(--font-d);font-size:20px;font-weight:800;margin-bottom:.4rem}
+.setup-wrap>p{font-size:13px;color:var(--muted);margin-bottom:1.5rem}
+.setup-step{display:flex;gap:.9rem;margin-bottom:1rem;padding:.85rem 1rem;background:var(--surface);border-radius:10px;border:1px solid var(--border)}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--accent-light);color:var(--accent);font-family:var(--font-d);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:2px}
+.step-body p{font-size:12px;color:var(--muted)}
+.step-body code{font-family:monospace;font-size:11px;background:#f1f5f9;padding:2px 5px;border-radius:4px;color:var(--accent)}
+.cfg-form{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
+.cfg-form input{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:monospace;font-size:12px;padding:.45rem .7rem;outline:none;transition:border-color .2s}
+.cfg-form input:focus{border-color:var(--accent);background:var(--white)}
+.cfg-form input::placeholder{color:var(--muted2)}
+
+@media(max-width:700px){
+  .topbar{padding:0 1rem;height:auto;flex-wrap:wrap;padding:.6rem 1rem;gap:.5rem}
+  .topbar-right{flex-wrap:wrap}
+  .tabs{padding:0 1rem}
+  .main{padding:1rem}
+  .dash-cols,.form-grid{grid-template-columns:1fr}
+  .pedidos-grid{grid-template-columns:1fr}
+  .admin-modal{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <p>Conectando ao Firebase...</p>
+</div>
+
+<div id="setup-screen" style="display:none;padding:2rem">
+  <div class="setup-wrap">
+    <h2>Configurar Firebase</h2>
+    <p>Cole as credenciais do seu projeto Firebase para ativar sincronização em tempo real.</p>
+    <div class="setup-step"><div class="step-num">1</div><div class="step-body"><h4>Criar projeto</h4><p>Acesse <code>console.firebase.google.com</code> → Adicionar projeto → nome: <code>tre-ma-atas</code></p></div></div>
+    <div class="setup-step"><div class="step-num">2</div><div class="step-body"><h4>Ativar Firestore</h4><p>Firestore Database → Criar → Modo de teste → região <code>southamerica-east1</code></p></div></div>
+    <div class="setup-step"><div class="step-num">3</div><div class="step-body"><h4>Copiar credenciais</h4><p>Engrenagem → Configurações → Seus aplicativos → App da Web → copie o <code>firebaseConfig</code></p></div></div>
+    <div class="setup-step"><div class="step-num">4</div><div class="step-body"><h4>Colar abaixo</h4><p>Preencha os campos e clique em Conectar</p></div></div>
+    <div class="cfg-form">
+      <input id="cfg-apiKey" placeholder="apiKey: AIzaSy...">
+      <input id="cfg-authDomain" placeholder="authDomain: projeto.firebaseapp.com">
+      <input id="cfg-projectId" placeholder="projectId: meu-projeto">
+      <input id="cfg-appId" placeholder="appId: 1:123:web:abc...">
+      <div style="display:flex;gap:.6rem;margin-top:.25rem">
+        <button class="btn btn-primary" style="flex:1" onclick="saveConfig()">Conectar ao Firebase</button>
+        <button class="btn btn-ghost" onclick="useLocalMode()">Modo local</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="emblem">TRE<br>MA</div>
+    <div>
+      <div class="org-name">Tribunal Regional Eleitoral do <span>Maranhão</span></div>
+      <div class="org-sub">Sistema de Atas e Aquisições</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="resp-chip">
+      <div class="resp-avatar">KG</div>
+      <div><span class="resp-label">Responsável</span><span class="resp-name">Katiane Fialho Gandra</span></div>
+    </div>
+    <div class="live-chip"><div class="live-dot"></div><span id="sync-label">Tempo Real</span></div>
+    <div class="date-tag" id="date-chip"></div>
+    <button class="admin-btn" id="admin-btn" onclick="clickAdmin()">
+      <span id="admin-icon">🔒</span><span id="admin-label">Admin</span>
+    </button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" onclick="switchTab('atas',this)">Atas de Registro de Preços <span class="tab-count" id="tc-atas">0</span></button>
+  <button class="tab" onclick="switchTab('aquisicoes',this)">Aquisições <span class="tab-count" id="tc-aq">0</span></button>
+  <button class="tab" onclick="switchTab('dashboard',this)">Visão Geral</button>
+</nav>
+
+<main class="main">
+
+<!-- ATAS -->
+<section id="s-atas" class="section active">
+  <div class="page-hdr">
+    <div><h2>Atas de Registro de Preços</h2><p>Saldos, pedidos e consumo por item e fornecedor</p></div>
+  </div>
+  <div class="kpi-row" id="atas-kpis"></div>
+  <div class="controls">
+    <div class="sw"><span class="si">⌕</span><input type="text" id="atas-search" placeholder="Buscar material, empresa, nº ata, SEI..." oninput="renderAtasTable()"></div>
+    <select id="atas-empresa" onchange="renderAtasTable()"><option value="">Todas as empresas</option></select>
+    <select id="atas-ata" onchange="renderAtasTable()"><option value="">Todas as atas</option></select>
+    <select id="atas-status" onchange="renderAtasTable()">
+      <option value="">Todos os status</option>
+      <option value="disponivel">Disponível</option>
+      <option value="critico">Crítico (&lt;20%)</option>
+      <option value="esgotado">Esgotado</option>
+    </select>
+  </div>
+  <div class="results-bar" id="atas-rbar"></div>
+  <div class="table-card">
+    <div class="table-hdr"><span class="table-hdr-title">Itens das Atas</span><span id="atas-count" style="font-size:12px;color:var(--muted)"></span></div>
+    <div class="tscroll">
+      <table>
+        <thead><tr>
+          <th style="width:30px"></th>
+          <th>Nº Ata / Empresa</th><th>SEI</th><th>Material / Descrição</th>
+          <th>Validade</th><th>Qtd.</th><th>Vlr. Unit.</th><th>Vlr. Total</th>
+          <th>1º Ped.</th><th>2º Ped.</th><th>3º Ped.</th>
+          <th>Saldo un.</th><th>Saldo R$</th><th>Consumo</th><th>Status</th>
+        </tr></thead>
+        <tbody id="atas-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- AQUISIÇÕES -->
+<section id="s-aquisicoes" class="section">
+  <div class="page-hdr"><div><h2>Aquisições</h2><p>Cotações, estimativas e quantitativos</p></div></div>
+  <div class="kpi-row" id="aq-kpis"></div>
+  <div class="controls">
+    <div class="sw"><span class="si">⌕</span><input type="text" id="aq-search" placeholder="Buscar item ou descrição..." oninput="renderAqTable()"></div>
+    <select id="aq-proc" onchange="renderAqTable()"><option value="">Todos os processos</option></select>
+  </div>
+  <div class="table-card">
+    <div class="table-hdr"><span class="table-hdr-title">Itens de Aquisição</span><span id="aq-count" style="font-size:12px;color:var(--muted)"></span></div>
+    <div class="tscroll">
+      <table>
+        <thead><tr>
+          <th>Processo</th><th>Nº</th><th>Descrição</th>
+          <th>Cotação 1</th><th>Cotação 2</th><th>Cotação 3</th>
+          <th>Ref.</th><th>Custo Unit.</th><th>Qtd. Ini.</th><th>Qtd. Total</th>
+          <th>Custo Ini.</th><th>Custo Total</th><th></th>
+        </tr></thead>
+        <tbody id="aq-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="s-dashboard" class="section">
+  <div class="page-hdr"><div><h2>Visão Geral</h2><p>Consolidado de contratos, atas e aquisições do TRE-MA</p></div></div>
+  <div class="kpi-row" id="dash-kpis"></div>
+  <div style="margin-bottom:.5rem;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)">Resumo das Atas Vigentes</div>
+  <div class="ata-grid" id="ata-cards"></div>
+  <div class="dash-cols" id="dash-cols"></div>
+</section>
+
+</main>
+</div><!-- #app -->
+
+<!-- MODAL AQ DETALHE -->
+<div class="overlay" id="modal-aq" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal"><button class="modal-x" onclick="document.getElementById('modal-aq').classList.remove('open')">✕</button>
+  <div id="modal-aq-body"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div class="overlay" id="modal-login" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal login-modal">
+    <button class="modal-x" onclick="document.getElementById('modal-login').classList.remove('open')">✕</button>
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:800;margin-bottom:.3rem">Acesso Administrativo</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:1.2rem">Insira a senha para editar dados do sistema</p>
+    <div class="fg"><label>Senha</label><input type="password" id="login-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
+    <div style="display:flex;gap:.6rem;margin-top:1rem">
+      <button class="btn btn-primary" style="flex:1" onclick="doLogin()">Entrar</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-login').classList.remove('open')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="overlay" id="modal-admin" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal admin-modal">
+    <button class="modal-x" onclick="document.getElementById('modal-admin').classList.remove('open')">✕</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+      <div><div style="font-family:var(--font-d);font-size:17px;font-weight:800">Painel Admin</div><div style="font-size:12px;color:var(--muted)">TRE-MA — Gerenciar atas e aquisições</div></div>
+      <button class="btn btn-ghost" onclick="doLogout()" style="font-size:12px">Sair da sessão</button>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('nova-ata',this)">+ Nova Ata</button>
+      <button class="admin-tab" onclick="switchAdminTab('editar-atas',this)">Editar Atas</button>
+      <button class="admin-tab" onclick="switchAdminTab('nova-aq',this)">+ Nova Aquisição</button>
+      <button class="admin-tab" onclick="switchAdminTab('editar-aq',this)">Editar Aquisições</button>
+    </div>
+    <div class="admin-section active" id="as-nova-ata">
+      <div class="form-grid">
+        <div class="fg"><label>Nº da Ata</label><input id="fa-ata" placeholder="N.º 90/2024"></div>
+        <div class="fg"><label>Empresa</label><input id="fa-empresa" placeholder="Nome da empresa"></div>
+        <div class="fg full"><label>SEI do Processo</label><input id="fa-sei" placeholder="0011119-18.2024.6.27.8000"></div>
+        <div class="fg full"><label>Validade</label><input id="fa-validade" placeholder="25/08/2025 a 25/08/2026"></div>
+        <div class="fg full"><label>Material / Descrição</label><input id="fa-material" placeholder="Descrição completa do item"></div>
+        <div class="fg"><label>Qtd. Total</label><input id="fa-qtd" type="number" placeholder="100"></div>
+        <div class="fg"><label>Valor Unitário (R$)</label><input id="fa-valorUnit" type="number" step="0.01" placeholder="1500.00"></div>
+        <div class="fg"><label>1º Pedido (qtd)</label><input id="fa-p1" type="number" value="0"></div>
+        <div class="fg"><label>2º Pedido (qtd)</label><input id="fa-p2" type="number" value="0"></div>
+        <div class="fg"><label>3º Pedido (qtd)</label><input id="fa-p3" type="number" value="0"></div>
+        <div class="fg full"><label>Observações</label><textarea id="fa-obs" placeholder="Observações opcionais..."></textarea></div>
+      </div>
+      <button class="btn btn-primary" onclick="salvarAta()">Salvar Item de Ata</button>
+    </div>
+    <div class="admin-section" id="as-editar-atas">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:.8rem">Clique em ✎ para editar ou ✕ para excluir</div>
+      <div class="admin-list" id="admin-atas-list"></div>
+    </div>
+    <div class="admin-section" id="as-nova-aq">
+      <div class="form-grid">
+        <div class="fg full"><label>Nome do Processo</label><input id="faq-processo" placeholder="Orçamento Mobiliário 2026"></div>
+        <div class="fg"><label>Nº do Item</label><input id="faq-item" type="number" placeholder="1"></div>
+        <div class="fg full"><label>Descrição do Objeto</label><input id="faq-descricao" placeholder="Bebedouro de Coluna"></div>
+        <div class="fg"><label>Cotação 1 (R$)</label><input id="faq-c1" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Cotação 2 (R$)</label><input id="faq-c2" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Cotação 3 (R$)</label><input id="faq-c3" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Cotação 4 (R$)</label><input id="faq-c4" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Cotação 5 (R$)</label><input id="faq-c5" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Referência</label><select id="faq-ref"><option>Média</option><option>Menor</option><option>Mediana</option></select></div>
+        <div class="fg"><label>Custo Unit. Est. (R$)</label><input id="faq-custoUnit" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Qtd. Inicial</label><input id="faq-qtdIni" type="number" placeholder="44"></div>
+        <div class="fg"><label>Qtd. Total</label><input id="faq-qtdTot" type="number" placeholder="44"></div>
+        <div class="fg"><label>Custo Inicial (R$)</label><input id="faq-custoIni" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Custo Total (R$)</label><input id="faq-custoTot" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="fg full"><label>Observações</label><textarea id="faq-obs" placeholder="Observações opcionais..."></textarea></div>
+      </div>
+      <button class="btn btn-primary" onclick="salvarAq()">Salvar Aquisição</button>
+    </div>
+    <div class="admin-section" id="as-editar-aq">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:.8rem">Gerencie os itens de aquisição cadastrados</div>
+      <div class="admin-list" id="admin-aq-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT ATA -->
+<div class="overlay" id="modal-edit-ata" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal admin-modal">
+    <button class="modal-x" onclick="document.getElementById('modal-edit-ata').classList.remove('open')">✕</button>
+    <div style="font-family:var(--font-d);font-size:16px;font-weight:800;margin-bottom:1rem;color:var(--text)">Editar Item de Ata</div>
+    <input type="hidden" id="edit-ata-id">
+    <div class="form-grid">
+      <div class="fg"><label>Nº da Ata</label><input id="edit-fa-ata"></div>
+      <div class="fg"><label>Empresa</label><input id="edit-fa-empresa"></div>
+      <div class="fg full"><label>SEI</label><input id="edit-fa-sei"></div>
+      <div class="fg full"><label>Validade</label><input id="edit-fa-validade"></div>
+      <div class="fg full"><label>Material</label><input id="edit-fa-material"></div>
+      <div class="fg"><label>Qtd. Total</label><input id="edit-fa-qtd" type="number"></div>
+      <div class="fg"><label>Valor Unitário</label><input id="edit-fa-valorUnit" type="number" step="0.01"></div>
+      <div class="fg"><label>1º Pedido</label><input id="edit-fa-p1" type="number"></div>
+      <div class="fg"><label>2º Pedido</label><input id="edit-fa-p2" type="number"></div>
+      <div class="fg"><label>3º Pedido</label><input id="edit-fa-p3" type="number"></div>
+      <div class="fg full"><label>Observações</label><textarea id="edit-fa-obs"></textarea></div>
+    </div>
+    <div style="display:flex;gap:.6rem">
+      <button class="btn btn-primary" onclick="updateAta()">Salvar Alterações</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-edit-ata').classList.remove('open')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT AQ -->
+<div class="overlay" id="modal-edit-aq" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal admin-modal">
+    <button class="modal-x" onclick="document.getElementById('modal-edit-aq').classList.remove('open')">✕</button>
+    <div style="font-family:var(--font-d);font-size:16px;font-weight:800;margin-bottom:1rem;color:var(--text)">Editar Item de Aquisição</div>
+    <input type="hidden" id="edit-aq-id">
+    <div class="form-grid">
+      <div class="fg full"><label>Processo</label><input id="edit-faq-processo"></div>
+      <div class="fg"><label>Nº Item</label><input id="edit-faq-item" type="number"></div>
+      <div class="fg full"><label>Descrição</label><input id="edit-faq-descricao"></div>
+      <div class="fg"><label>Cotação 1</label><input id="edit-faq-c1" type="number" step="0.01"></div>
+      <div class="fg"><label>Cotação 2</label><input id="edit-faq-c2" type="number" step="0.01"></div>
+      <div class="fg"><label>Cotação 3</label><input id="edit-faq-c3" type="number" step="0.01"></div>
+      <div class="fg"><label>Ref.</label><select id="edit-faq-ref"><option>Média</option><option>Menor</option><option>Mediana</option></select></div>
+      <div class="fg"><label>Custo Unit.</label><input id="edit-faq-custoUnit" type="number" step="0.01"></div>
+      <div class="fg"><label>Qtd. Ini.</label><input id="edit-faq-qtdIni" type="number"></div>
+      <div class="fg"><label>Qtd. Total</label><input id="edit-faq-qtdTot" type="number"></div>
+      <div class="fg"><label>Custo Ini.</label><input id="edit-faq-custoIni" type="number" step="0.01"></div>
+      <div class="fg"><label>Custo Total</label><input id="edit-faq-custoTot" type="number" step="0.01"></div>
+      <div class="fg full"><label>Obs.</label><textarea id="edit-faq-obs"></textarea></div>
+    </div>
+    <div style="display:flex;gap:.6rem">
+      <button class="btn btn-primary" onclick="updateAq()">Salvar Alterações</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-edit-aq').classList.remove('open')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// ══════════════════════════════════════════════
+//  ⚠️  SEGURANÇA — Altere esta senha antes de publicar
+//  Não coloque a senha em repositório público!
+//  Use uma senha forte: letras, números, símbolos.
+// ══════════════════════════════════════════════
+const ADMIN_PASSWORD = 'TRE@2024';  // ← ALTERE AQUI
+
+const CFG_KEY = 'tre_ma_fb_v2';
+let ATAS = [], AQUISICOES = [], db = null, isAdmin = false, useLocal = false;
+
+// ─── DADOS INICIAIS ───
+const ATAS0 = [
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Poltrona Giratória Média em Tela — Volare",qtd:206,valorUnit:1405,p1:70,p2:100,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Poltrona Giratória Alta — Volare",qtd:12,valorUnit:1580,p1:4,p2:4,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Cadeira Tipo Presidente Tela com Apoio de Cabeça — Tecton",qtd:12,valorUnit:2547,p1:4,p2:4,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Poltrona Fixa Média",qtd:171,valorUnit:1254,p1:44,p2:100,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Poltrona Fixa Média com Prancheta",qtd:393,valorUnit:1695,p1:334,p2:20,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Poltrona Fixa para Obeso",qtd:5,valorUnit:2484,p1:2,p2:1,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Poltrona Fixa para Obeso com Prancheta",qtd:8,valorUnit:2739,p1:2,p2:2,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Longarina Média de 03 Lugares com Apoio de Braços",qtd:27,valorUnit:2620,p1:22,p2:4,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Longarina Média de 02 Lugares com Apoio de Braços — Erme",qtd:81,valorUnit:1878,p1:44,p2:33,p3:0,obs:""},
+  {sei:"0011119-18.2024.6.27.8000",empresa:"FLEXFORM",ata:"N.º 90/2024",validade:"25/08/2025 a 25/08/2026",material:"Cadeira Baixa Giratória Tipo Caixa — Erme",qtd:6,valorUnit:1545,p1:2,p2:2,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"GMS ABREU E COMÉRCIO LTDA",ata:"N.º 81/2024",validade:"25/08/2025 a 25/08/2026",material:"Bebedouro de Coluna",qtd:45,valorUnit:690,p1:22,p2:22,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"ADEQUA MÓVEIS LTDA",ata:"N.º 82/2024",validade:"25/08/2025 a 25/08/2026",material:"Mesa Reta 180x60",qtd:18,valorUnit:500,p1:4,p2:6,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"ADEQUA MÓVEIS LTDA",ata:"N.º 82/2024",validade:"25/08/2025 a 25/08/2026",material:"Mesa 80x60",qtd:48,valorUnit:418,p1:44,p2:2,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"ADEQUA MÓVEIS LTDA",ata:"N.º 82/2024",validade:"25/08/2025 a 25/08/2026",material:"Mesa Circular com Tampão 120cm",qtd:21,valorUnit:300,p1:4,p2:5,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"ADEQUA MÓVEIS LTDA",ata:"N.º 82/2024",validade:"25/08/2025 a 25/08/2026",material:"Mesa Redonda Tampo MDF 0,90 Diâmetro",qtd:12,valorUnit:305,p1:4,p2:7,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"ADEQUA MÓVEIS LTDA",ata:"N.º 82/2024",validade:"25/08/2025 a 25/08/2026",material:"Mesa em L 1,40 x 1,40",qtd:51,valorUnit:1000,p1:4,p2:44,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"2WE MÓVEIS COMERCIAIS LTDA",ata:"N.º 85/2023",validade:"25/08/2025 a 25/08/2026",material:"Armário Baixo 2 Portas",qtd:36,valorUnit:777,p1:4,p2:22,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"2WE MÓVEIS COMERCIAIS LTDA",ata:"N.º 85/2023",validade:"25/08/2025 a 25/08/2026",material:"Mesa Linear 1,20",qtd:216,valorUnit:679,p1:155,p2:22,p3:0,obs:""},
+  {sei:"0013384-90.2024.6.27.8000",empresa:"SUL ÁGUA EQUIPAMENTOS LTDA",ata:"N.º 84/2023",validade:"25/08/2025 a 25/08/2026",material:"Micro-ondas",qtd:100,valorUnit:573.64,p1:22,p2:22,p3:0,obs:""},
+  {sei:"0007782-21.2024.6.27.8000",empresa:"PUBLIC SYSTEM IND. E COM. DE ORIENTADORES",ata:"N.º 74/2024",validade:"25/08/2025 a 25/08/2026",material:"Organizador de Filas",qtd:100,valorUnit:190,p1:68,p2:22,p3:0,obs:""}
+];
+const AQ0 = [
+  {processo:"Orçamento Mobiliário 2026",item:1,descricao:"Bebedouro de Coluna",c1:719.90,c2:709.60,c3:773.62,c4:0,c5:0,ref:"Média",custoUnit:734.37,qtdIni:44,qtdTot:44,custoIni:32312.28,custoTot:32312.28,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:2,descricao:'Smart TV 43" UHD 4K',c1:1983.60,c2:1930.40,c3:1956.00,c4:0,c5:0,ref:"Média",custoUnit:1956.67,qtdIni:44,qtdTot:44,custoIni:86093.48,custoTot:86093.48,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:3,descricao:'Smart TV 55" UHD 4K',c1:2299.00,c2:2754.05,c3:2659.05,c4:0,c5:0,ref:"Média",custoUnit:2570.70,qtdIni:44,qtdTot:44,custoIni:113110.80,custoTot:113110.80,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:4,descricao:"Apoio de Pé",c1:64.75,c2:78.64,c3:69.22,c4:0,c5:0,ref:"Média",custoUnit:70.87,qtdIni:44,qtdTot:44,custoIni:3118.28,custoTot:3118.28,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:5,descricao:"Mesa Plástica Monobloco",c1:219.58,c2:133.00,c3:199.71,c4:0,c5:0,ref:"Média",custoUnit:184.10,qtdIni:44,qtdTot:44,custoIni:8100.40,custoTot:8100.40,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:6,descricao:"Armário Médio Diretor",c1:1058.18,c2:858.09,c3:884.53,c4:0,c5:0,ref:"Média",custoUnit:933.60,qtdIni:44,qtdTot:44,custoIni:41078.40,custoTot:41078.40,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:7,descricao:"Escada de Alumínio",c1:179.90,c2:185.41,c3:199.95,c4:0,c5:0,ref:"Média",custoUnit:188.42,qtdIni:44,qtdTot:44,custoIni:8290.48,custoTot:8290.48,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:8,descricao:"Cadeira Plástica com Braço",c1:109.90,c2:70.00,c3:103.35,c4:0,c5:0,ref:"Média",custoUnit:94.42,qtdIni:44,qtdTot:44,custoIni:4154.48,custoTot:4154.48,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:9,descricao:"Quadro Branco com Tripé",c1:410.99,c2:283.99,c3:481.52,c4:0,c5:0,ref:"Média",custoUnit:392.17,qtdIni:44,qtdTot:44,custoIni:17255.48,custoTot:17255.48,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:10,descricao:"Carrinho Duas Rodas",c1:239.00,c2:325.88,c3:250.00,c4:0,c5:0,ref:"Média",custoUnit:271.63,qtdIni:44,qtdTot:44,custoIni:11951.72,custoTot:11951.72,obs:""},
+  {processo:"Orçamento Mobiliário 2026",item:11,descricao:"Frigobar",c1:1754.97,c2:1448.00,c3:1358.90,c4:0,c5:0,ref:"Média",custoUnit:1520.62,qtdIni:44,qtdTot:44,custoIni:66907.28,custoTot:66907.28,obs:""}
+];
+
+// ─── UTILS ───
+const R = v => "R$ " + Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const sl = i => i.qtd-(i.p1||0)-(i.p2||0)-(i.p3||0);
+const pct = i => Math.min((((i.p1||0)+(i.p2||0)+(i.p3||0))/i.qtd)*100,100);
+function stOf(i){const s=sl(i),p=pct(i);if(s<=0)return{l:"Esgotado",c:"b-red",k:"esgotado"};if(p>=80)return{l:"Crítico",c:"b-amber",k:"critico"};return{l:"Disponível",c:"b-green",k:"disponivel"};}
+function pcol(p){if(p>=100)return"#dc2626";if(p>=80)return"#d97706";if(p>=50)return"#2563eb";return"#16a34a";}
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+function switchTab(n,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s-'+n).classList.add('active');
+  btn.classList.add('active');
+  if(n==='dashboard')renderDash();
+}
+function toast(msg,ok=true){
+  const t=document.getElementById('toast');
+  t.innerHTML=(ok?'✓':'✗')+' '+esc(msg);
+  t.style.borderColor=ok?'#bbf7d0':'#fecaca';
+  t.style.color=ok?'var(--green)':'var(--red)';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ─── FIREBASE INIT ───
+window.addEventListener('load',()=>{
+  document.getElementById('date-chip').textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const saved=localStorage.getItem(CFG_KEY);
+  if(saved){try{initFirebase(JSON.parse(saved));return;}catch(e){}}
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('setup-screen').style.display='block';
+});
+
+function saveConfig(){
+  const cfg={
+    apiKey:document.getElementById('cfg-apiKey').value.trim(),
+    authDomain:document.getElementById('cfg-authDomain').value.trim(),
+    projectId:document.getElementById('cfg-projectId').value.trim(),
+    appId:document.getElementById('cfg-appId').value.trim()
+  };
+  if(!cfg.apiKey||!cfg.projectId){alert('Preencha apiKey e projectId');return;}
+  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('loading-screen').style.display='flex';
+  initFirebase(cfg);
+}
+
+function useLocalMode(){
+  useLocal=true;
+  ATAS=ATAS0.map((d,i)=>({...d,id:'l'+i}));
+  AQUISICOES=AQ0.map((d,i)=>({...d,id:'l'+i}));
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('sync-label').textContent='Modo Local';
+  startApp();
+}
+
+function initFirebase(cfg){
+  try{
+    const app=firebase.initializeApp(cfg);
+    db=firebase.firestore(app);
+    let aL=false,qL=false;
+    function chk(){if(aL&&qL){document.getElementById('loading-screen').style.display='none';startApp();}}
+    db.collection('atas').onSnapshot(snap=>{
+      if(snap.empty&&!aL){const b=db.batch();ATAS0.forEach(d=>b.set(db.collection('atas').doc(),d));b.commit();}
+      ATAS=snap.docs.map(d=>({...d.data(),id:d.id}));aL=true;
+      if(document.getElementById('app').style.display!=='none')refreshAll();chk();
+    },()=>useLocalMode());
+    db.collection('aquisicoes').onSnapshot(snap=>{
+      if(snap.empty&&!qL){const b=db.batch();AQ0.forEach(d=>b.set(db.collection('aquisicoes').doc(),d));b.commit();}
+      AQUISICOES=snap.docs.map(d=>({...d.data(),id:d.id}));qL=true;
+      if(document.getElementById('app').style.display!=='none')refreshAll();chk();
+    },()=>{});
+  }catch(e){
+    localStorage.removeItem(CFG_KEY);
+    document.getElementById('loading-screen').style.display='none';
+    document.getElementById('setup-screen').style.display='block';
+    alert('Erro Firebase: '+e.message);
+  }
+}
+
+function startApp(){document.getElementById('app').style.display='block';refreshAll();}
+function refreshAll(){renderAtasKpis();populateAtasFilters();renderAtasTable();renderAqKpis();populateAqFilters();renderAqTable();}
+
+// ─── ADMIN ───
+function clickAdmin(){isAdmin?openAdmin():document.getElementById('modal-login').classList.add('open');}
+function openAdmin(){document.getElementById('modal-admin').classList.add('open');renderAdminLists();}
+function doLogin(){
+  const pwd=document.getElementById('login-pwd').value;
+  if(pwd===ADMIN_PASSWORD){
+    isAdmin=true;
+    document.getElementById('login-pwd').value='';
+    document.getElementById('login-error').style.display='none';
+    document.getElementById('modal-login').classList.remove('open');
+    document.getElementById('admin-btn').classList.add('logged');
+    document.getElementById('admin-icon').textContent='🔓';
+    document.getElementById('admin-label').textContent='Admin ativo';
+    openAdmin();
+  }else{document.getElementById('login-error').style.display='block';}
+}
+function doLogout(){
+  isAdmin=false;
+  document.getElementById('admin-btn').classList.remove('logged');
+  document.getElementById('admin-icon').textContent='🔒';
+  document.getElementById('admin-label').textContent='Admin';
+  document.getElementById('modal-admin').classList.remove('open');
+}
+function switchAdminTab(n,btn){
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('as-'+n).classList.add('active');btn.classList.add('active');
+  if(n==='editar-atas'||n==='editar-aq')renderAdminLists();
+}
+
+// ─── CRUD ATAS ───
+async function salvarAta(){
+  const d={sei:document.getElementById('fa-sei').value.trim(),empresa:document.getElementById('fa-empresa').value.trim(),ata:document.getElementById('fa-ata').value.trim(),validade:document.getElementById('fa-validade').value.trim(),material:document.getElementById('fa-material').value.trim(),qtd:Number(document.getElementById('fa-qtd').value)||0,valorUnit:Number(document.getElementById('fa-valorUnit').value)||0,p1:Number(document.getElementById('fa-p1').value)||0,p2:Number(document.getElementById('fa-p2').value)||0,p3:Number(document.getElementById('fa-p3').value)||0,obs:document.getElementById('fa-obs').value.trim()};
+  if(!d.material||!d.qtd){toast('Preencha material e quantidade',false);return;}
+  try{if(useLocal){ATAS.push({...d,id:'l'+Date.now()});refreshAll();}else await db.collection('atas').add(d);toast('Item salvo!');['fa-sei','fa-empresa','fa-ata','fa-validade','fa-material','fa-obs'].forEach(id=>document.getElementById(id).value='');['fa-qtd','fa-valorUnit','fa-p1','fa-p2','fa-p3'].forEach(id=>document.getElementById(id).value='0');}catch(e){toast('Erro: '+e.message,false);}
+}
+async function deletarAta(id){
+  if(!confirm('Excluir este item?'))return;
+  try{if(useLocal){ATAS=ATAS.filter(i=>i.id!==id);refreshAll();renderAdminLists();}else await db.collection('atas').doc(id).delete();toast('Excluído');}catch(e){toast('Erro',false);}
+}
+function editarAta(id){
+  const i=ATAS.find(a=>a.id===id);if(!i)return;
+  document.getElementById('edit-ata-id').value=id;
+  ['sei','empresa','ata','validade','material','obs'].forEach(f=>document.getElementById('edit-fa-'+f).value=i[f]||'');
+  ['qtd','valorUnit','p1','p2','p3'].forEach(f=>document.getElementById('edit-fa-'+f).value=i[f]||0);
+  document.getElementById('modal-edit-ata').classList.add('open');
+}
+async function updateAta(){
+  const id=document.getElementById('edit-ata-id').value;
+  const d={sei:document.getElementById('edit-fa-sei').value.trim(),empresa:document.getElementById('edit-fa-empresa').value.trim(),ata:document.getElementById('edit-fa-ata').value.trim(),validade:document.getElementById('edit-fa-validade').value.trim(),material:document.getElementById('edit-fa-material').value.trim(),qtd:Number(document.getElementById('edit-fa-qtd').value)||0,valorUnit:Number(document.getElementById('edit-fa-valorUnit').value)||0,p1:Number(document.getElementById('edit-fa-p1').value)||0,p2:Number(document.getElementById('edit-fa-p2').value)||0,p3:Number(document.getElementById('edit-fa-p3').value)||0,obs:document.getElementById('edit-fa-obs').value.trim()};
+  try{if(useLocal){const x=ATAS.findIndex(a=>a.id===id);if(x>=0)ATAS[x]={...d,id};refreshAll();renderAdminLists();}else await db.collection('atas').doc(id).update(d);document.getElementById('modal-edit-ata').classList.remove('open');toast('Atualizado!');}catch(e){toast('Erro',false);}
+}
+
+// ─── CRUD AQ ───
+async function salvarAq(){
+  const d={processo:document.getElementById('faq-processo').value.trim(),item:Number(document.getElementById('faq-item').value)||0,descricao:document.getElementById('faq-descricao').value.trim(),c1:Number(document.getElementById('faq-c1').value)||0,c2:Number(document.getElementById('faq-c2').value)||0,c3:Number(document.getElementById('faq-c3').value)||0,c4:Number(document.getElementById('faq-c4').value)||0,c5:Number(document.getElementById('faq-c5').value)||0,ref:document.getElementById('faq-ref').value,custoUnit:Number(document.getElementById('faq-custoUnit').value)||0,qtdIni:Number(document.getElementById('faq-qtdIni').value)||0,qtdTot:Number(document.getElementById('faq-qtdTot').value)||0,custoIni:Number(document.getElementById('faq-custoIni').value)||0,custoTot:Number(document.getElementById('faq-custoTot').value)||0,obs:document.getElementById('faq-obs').value.trim()};
+  if(!d.descricao||!d.processo){toast('Preencha processo e descrição',false);return;}
+  try{if(useLocal){AQUISICOES.push({...d,id:'l'+Date.now()});refreshAll();}else await db.collection('aquisicoes').add(d);toast('Aquisição salva!');['faq-processo','faq-descricao','faq-obs'].forEach(id=>document.getElementById(id).value='');['faq-item','faq-c1','faq-c2','faq-c3','faq-c4','faq-c5','faq-custoUnit','faq-qtdIni','faq-qtdTot','faq-custoIni','faq-custoTot'].forEach(id=>document.getElementById(id).value='0');}catch(e){toast('Erro',false);}
+}
+async function deletarAq(id){
+  if(!confirm('Excluir?'))return;
+  try{if(useLocal){AQUISICOES=AQUISICOES.filter(i=>i.id!==id);refreshAll();renderAdminLists();}else await db.collection('aquisicoes').doc(id).delete();toast('Excluído');}catch(e){toast('Erro',false);}
+}
+function editarAq(id){
+  const i=AQUISICOES.find(a=>a.id===id);if(!i)return;
+  document.getElementById('edit-aq-id').value=id;
+  ['processo','descricao','obs'].forEach(f=>document.getElementById('edit-faq-'+f).value=i[f]||'');
+  ['item','c1','c2','c3','qtdIni','qtdTot','custoIni','custoTot','custoUnit'].forEach(f=>document.getElementById('edit-faq-'+f).value=i[f]||0);
+  document.getElementById('edit-faq-ref').value=i.ref||'Média';
+  document.getElementById('modal-edit-aq').classList.add('open');
+}
+async function updateAq(){
+  const id=document.getElementById('edit-aq-id').value;
+  const d={processo:document.getElementById('edit-faq-processo').value.trim(),item:Number(document.getElementById('edit-faq-item').value)||0,descricao:document.getElementById('edit-faq-descricao').value.trim(),c1:Number(document.getElementById('edit-faq-c1').value)||0,c2:Number(document.getElementById('edit-faq-c2').value)||0,c3:Number(document.getElementById('edit-faq-c3').value)||0,ref:document.getElementById('edit-faq-ref').value,custoUnit:Number(document.getElementById('edit-faq-custoUnit').value)||0,qtdIni:Number(document.getElementById('edit-faq-qtdIni').value)||0,qtdTot:Number(document.getElementById('edit-faq-qtdTot').value)||0,custoIni:Number(document.getElementById('edit-faq-custoIni').value)||0,custoTot:Number(document.getElementById('edit-faq-custoTot').value)||0,obs:document.getElementById('edit-faq-obs').value.trim()};
+  try{if(useLocal){const x=AQUISICOES.findIndex(a=>a.id===id);if(x>=0)AQUISICOES[x]={...d,id};refreshAll();renderAdminLists();}else await db.collection('aquisicoes').doc(id).update(d);document.getElementById('modal-edit-aq').classList.remove('open');toast('Atualizado!');}catch(e){toast('Erro',false);}
+}
+
+function renderAdminLists(){
+  document.getElementById('admin-atas-list').innerHTML=ATAS.map(i=>`<div class="alist-item"><div style="flex:1;min-width:0"><div class="alist-title">${esc(i.material)}</div><div class="alist-sub">${esc(i.ata)} · ${esc((i.empresa||'').split(' ').slice(0,3).join(' '))} · Saldo: ${sl(i)} un.</div></div><div style="display:flex;gap:.35rem;flex-shrink:0"><button class="icon-btn" onclick="editarAta('${esc(i.id)}')">✎</button><button class="icon-btn del" onclick="deletarAta('${esc(i.id)}')">✕</button></div></div>`).join('');
+  document.getElementById('admin-aq-list').innerHTML=AQUISICOES.map(i=>`<div class="alist-item"><div style="flex:1;min-width:0"><div class="alist-title">${i.item}. ${esc(i.descricao)}</div><div class="alist-sub">${esc(i.processo)} · ${R(i.custoTot)}</div></div><div style="display:flex;gap:.35rem;flex-shrink:0"><button class="icon-btn" onclick="editarAq('${esc(i.id)}')">✎</button><button class="icon-btn del" onclick="deletarAq('${esc(i.id)}')">✕</button></div></div>`).join('');
+}
+
+// ─── RENDER ATAS ───
+function renderAtasKpis(){
+  if(!ATAS.length)return;
+  const tv=ATAS.reduce((s,i)=>s+i.qtd*i.valorUnit,0);
+  const tc=ATAS.reduce((s,i)=>s+((i.p1||0)+(i.p2||0)+(i.p3||0))*i.valorUnit,0);
+  const crit=ATAS.filter(i=>pct(i)>=80&&sl(i)>0).length;
+  const esgo=ATAS.filter(i=>sl(i)<=0).length;
+  const atasU=[...new Set(ATAS.map(i=>i.ata))].length;
+  document.getElementById('atas-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-accent" style="background:var(--accent)"></div><div class="kpi-label">Valor Total das Atas</div><div class="kpi-value" style="color:var(--accent)">${R(tv)}</div><div class="kpi-sub">${ATAS.length} itens em ${atasU} atas</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--amber)"></div><div class="kpi-label">Total Consumido</div><div class="kpi-value" style="color:var(--amber)">${R(tc)}</div><div class="kpi-sub">${Math.round(tc/tv*100)}% do valor total</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--green)"></div><div class="kpi-label">Saldo Disponível</div><div class="kpi-value" style="color:var(--green)">${R(tv-tc)}</div><div class="kpi-sub">${ATAS.filter(i=>sl(i)>0&&pct(i)<80).length} itens disponíveis</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--red)"></div><div class="kpi-label">Alertas</div><div class="kpi-value" style="color:var(--red)">${crit+esgo}</div><div class="kpi-sub">${crit} críticos · ${esgo} esgotados</div></div>`;
+  document.getElementById('tc-atas').textContent=ATAS.length;
+}
+
+function populateAtasFilters(){
+  const se=document.getElementById('atas-empresa'),sa=document.getElementById('atas-ata');
+  const ev=se.value,av=sa.value;
+  se.innerHTML='<option value="">Todas as empresas</option>';
+  sa.innerHTML='<option value="">Todas as atas</option>';
+  [...new Set(ATAS.map(i=>i.empresa))].sort().forEach(e=>se.innerHTML+=`<option${e===ev?' selected':''}>${esc(e)}</option>`);
+  [...new Set(ATAS.map(i=>i.ata))].forEach(a=>sa.innerHTML+=`<option${a===av?' selected':''}>${esc(a)}</option>`);
+}
+
+function renderAtasTable(){
+  const s=document.getElementById('atas-search').value.toLowerCase();
+  const emp=document.getElementById('atas-empresa').value;
+  const ata=document.getElementById('atas-ata').value;
+  const st=document.getElementById('atas-status').value;
+  const data=ATAS.filter(i=>{
+    const ms=!s||i.material.toLowerCase().includes(s)||i.empresa.toLowerCase().includes(s)||i.ata.toLowerCase().includes(s)||(i.sei||'').includes(s);
+    return ms&&(!emp||i.empresa===emp)&&(!ata||i.ata===ata)&&(!st||stOf(i).k===st);
+  });
+  const vf=data.reduce((s,i)=>s+i.qtd*i.valorUnit,0);
+  document.getElementById('atas-rbar').innerHTML=`<strong>${data.length}</strong> de ${ATAS.length} itens &nbsp;·&nbsp; Valor: <strong style="color:var(--accent)">${R(vf)}</strong>${data.length<ATAS.length?' <span style="color:var(--amber)">— filtro ativo</span>':''}`;
+  document.getElementById('atas-count').textContent=data.length+' itens';
+  const tbody=document.getElementById('atas-tbody');
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="15" style="text-align:center;padding:2.5rem;color:var(--muted)">Nenhum item encontrado.</td></tr>`;return;}
+  tbody.innerHTML=data.map((item,idx)=>{
+    const s=sl(item),p=Math.round(pct(item)),st=stOf(item),rid='xp'+idx;
+    return `<tr onclick="toggleExp('${rid}')" style="cursor:pointer">
+      <td style="text-align:center;color:var(--muted2);font-size:11px" id="ar${rid}">▸</td>
+      <td><div style="font-size:12px;font-weight:700;color:var(--accent)">${esc(item.ata)}</div><div style="font-size:11px;color:var(--muted);margin-top:1px">${esc((item.empresa||'').split(' ').slice(0,3).join(' '))}</div></td>
+      <td class="mono">${esc(item.sei||'')}</td>
+      <td style="max-width:210px;font-weight:500;color:var(--text)">${esc(item.material)}</td>
+      <td style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(item.validade||'')}</td>
+      <td style="text-align:center;font-weight:600">${item.qtd}</td>
+      <td class="dim">${R(item.valorUnit)}</td>
+      <td style="font-weight:600">${R(item.qtd*item.valorUnit)}</td>
+      <td style="text-align:center;color:${(item.p1||0)>0?'var(--text2)':'var(--muted2)'}">${item.p1||'—'}</td>
+      <td style="text-align:center;color:${(item.p2||0)>0?'var(--text2)':'var(--muted2)'}">${item.p2||'—'}</td>
+      <td style="text-align:center;color:${(item.p3||0)>0?'var(--text2)':'var(--muted2)'}">${item.p3||'—'}</td>
+      <td style="text-align:center"><span style="font-weight:800;font-size:16px;font-family:var(--font-d);color:${s<=0?'var(--red)':s<item.qtd*.2?'var(--amber)':'var(--green)'}">${s}</span></td>
+      <td style="font-weight:500;color:${s<=0?'var(--red)':'var(--text2)'}">${R(s*item.valorUnit)}</td>
+      <td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:${p}%;background:${pcol(p)}"></div></div><span class="prog-pct">${p}%</span></div></td>
+      <td><span class="badge ${st.c}">${st.l}</span></td>
+    </tr>
+    <tr class="expand-row" id="${rid}"><td colspan="15"><div class="expand-inner">
+      <div class="exp-grid">
+        <div class="exp-field"><label>SEI</label><p style="font-family:monospace;font-size:12px;color:var(--muted)">${esc(item.sei||'')}</p></div>
+        <div class="exp-field"><label>Ata</label><p>${esc(item.ata)}</p></div>
+        <div class="exp-field"><label>Empresa</label><p>${esc(item.empresa||'')}</p></div>
+        <div class="exp-field"><label>Validade</label><p>${esc(item.validade||'')}</p></div>
+        <div class="exp-field"><label>Qtd. Registrada</label><p style="font-size:18px;font-family:var(--font-d);font-weight:800">${item.qtd} un.</p></div>
+        <div class="exp-field"><label>Valor Unitário</label><p style="font-size:18px;font-family:var(--font-d);font-weight:800">${R(item.valorUnit)}</p></div>
+      </div>
+      <div class="exp-section-title">Histórico de Pedidos</div>
+      <div class="pedidos-grid">
+        ${[1,2,3].map(n=>{const pv=item['p'+n]||0,sa=item.qtd-(item.p1||0)-(n>1?item.p2||0:0)-(n>2?item.p3||0:0);return`<div class="pedido-card"><div class="pedido-num">${n}º Pedido</div><div class="pedido-qtd" style="color:${pv>0?'var(--accent)':'var(--muted2)'}">${pv} <span style="font-size:12px;font-weight:400">un.</span></div><div class="pedido-val">${R(pv*item.valorUnit)}</div><div class="pedido-saldo" style="color:var(--muted)">Saldo após: <strong style="color:var(--text2)">${sa}</strong> un.</div></div>`;}).join('')}
+      </div>
+      <div class="saldo-box">
+        <div><label>Saldo Atual Disponível</label><div class="saldo-num" style="color:${s<=0?'var(--red)':s<item.qtd*.2?'var(--amber)':'var(--green)'}">${s} unidades</div><div class="saldo-sub">${R(s*item.valorUnit)} restantes em ata</div></div>
+        <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="prog-bar" style="width:160px;height:8px;border-radius:4px"><div class="prog-fill" style="width:${p}%;background:${pcol(p)};height:100%;border-radius:4px"></div></div><strong style="color:${pcol(p)};font-size:13px">${p}%</strong></div><div style="font-size:11px;color:var(--muted)">Total pedido: ${(item.p1||0)+(item.p2||0)+(item.p3||0)} de ${item.qtd} un.</div></div>
+      </div>
+      ${item.obs?`<div style="margin-top:.75rem;padding:.65rem .9rem;background:#fff9eb;border:1px solid var(--amber-mid);border-radius:8px;font-size:12px;color:var(--text2)"><strong>Obs: </strong>${esc(item.obs)}</div>`:''}
+      ${isAdmin?`<div style="margin-top:.75rem;display:flex;gap:.5rem"><button class="btn btn-ghost" style="font-size:12px" onclick="editarAta('${esc(item.id)}')">✎ Editar</button><button class="btn btn-danger" style="font-size:12px" onclick="deletarAta('${esc(item.id)}')">✕ Excluir</button></div>`:''}
+    </div></td></tr>`;
+  }).join('');
+}
+
+function toggleExp(id){
+  const e=document.getElementById(id),a=document.getElementById('ar'+id),o=e.classList.contains('open');
+  document.querySelectorAll('.expand-row.open').forEach(r=>r.classList.remove('open'));
+  document.querySelectorAll('[id^="ar"]').forEach(x=>{if(x.id.startsWith('arxp'))x.textContent='▸';});
+  if(!o){e.classList.add('open');a.textContent='▾';}
+}
+
+// ─── RENDER AQ ───
+function renderAqKpis(){
+  if(!AQUISICOES.length)return;
+  const te=AQUISICOES.reduce((s,i)=>s+i.custoTot,0);
+  const pr=[...new Set(AQUISICOES.map(i=>i.processo))];
+  const tq=AQUISICOES.reduce((s,i)=>s+i.qtdTot,0);
+  const mu=Math.min(...AQUISICOES.map(i=>i.custoUnit));
+  const xu=Math.max(...AQUISICOES.map(i=>i.custoUnit));
+  document.getElementById('aq-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-accent" style="background:var(--accent)"></div><div class="kpi-label">Custo Total Estimado</div><div class="kpi-value" style="color:var(--accent)">${R(te)}</div><div class="kpi-sub">${pr.length} processo(s)</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--green)"></div><div class="kpi-label">Total de Itens</div><div class="kpi-value" style="color:var(--green)">${AQUISICOES.length}</div><div class="kpi-sub">em ${pr.length} processo(s)</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--amber)"></div><div class="kpi-label">Quantidade Total</div><div class="kpi-value" style="color:var(--amber)">${tq.toLocaleString('pt-BR')} un.</div><div class="kpi-sub">a adquirir</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--purple)"></div><div class="kpi-label">Faixa de Custo Unit.</div><div class="kpi-value" style="color:var(--purple);font-size:14px">${R(mu)} – ${R(xu)}</div><div class="kpi-sub">menor ao maior estimado</div></div>`;
+  document.getElementById('tc-aq').textContent=AQUISICOES.length;
+}
+
+function populateAqFilters(){
+  const sel=document.getElementById('aq-proc'),cur=sel.value;
+  sel.innerHTML='<option value="">Todos os processos</option>';
+  [...new Set(AQUISICOES.map(i=>i.processo))].forEach(p=>sel.innerHTML+=`<option${p===cur?' selected':''}>${esc(p)}</option>`);
+}
+
+function renderAqTable(){
+  const s=document.getElementById('aq-search').value.toLowerCase();
+  const proc=document.getElementById('aq-proc').value;
+  const data=AQUISICOES.filter(i=>(!s||i.descricao.toLowerCase().includes(s)||i.processo.toLowerCase().includes(s))&&(!proc||i.processo===proc));
+  document.getElementById('aq-count').textContent=data.length+' itens';
+  const tbody=document.getElementById('aq-tbody');
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="13" style="text-align:center;padding:2.5rem;color:var(--muted)">Nenhum item encontrado.</td></tr>`;return;}
+  tbody.innerHTML=data.map(i=>{
+    const cl=[i.c1,i.c2,i.c3,i.c4,i.c5].filter(v=>v>0);
+    const mn=cl.length?Math.min(...cl):0,mx=cl.length?Math.max(...cl):0;
+    return`<tr onclick="openAqModal('${esc(i.id)}')" style="cursor:pointer">
+      <td><span class="badge b-blue" style="font-size:10px">${esc(i.processo)}</span></td>
+      <td style="text-align:center;font-weight:800;font-size:17px;font-family:var(--font-d);color:var(--text2)">${i.item}</td>
+      <td style="font-weight:500;max-width:200px;color:var(--text)">${esc(i.descricao)}</td>
+      <td style="color:${i.c1&&i.c1===mn?'var(--green)':i.c1&&i.c1===mx?'var(--red)':'var(--text2)';font-weight:${i.c1===mn?600:400}}">${i.c1?R(i.c1):'—'}</td>
+      <td style="color:${i.c2&&i.c2===mn?'var(--green)':i.c2&&i.c2===mx?'var(--red)':'var(--text2)'}">${i.c2?R(i.c2):'—'}</td>
+      <td style="color:${i.c3&&i.c3===mn?'var(--green)':i.c3&&i.c3===mx?'var(--red)':'var(--text2)'}">${i.c3?R(i.c3):'—'}</td>
+      <td><span class="badge b-purple">${esc(i.ref)}</span></td>
+      <td style="font-weight:700;color:var(--accent)">${R(i.custoUnit)}</td>
+      <td style="text-align:center;color:var(--text2)">${i.qtdIni}</td>
+      <td style="text-align:center;font-weight:600;color:var(--text)">${i.qtdTot}</td>
+      <td class="dim">${R(i.custoIni)}</td>
+      <td style="font-weight:700;color:var(--green)">${R(i.custoTot)}</td>
+      <td><button class="action-btn" onclick="event.stopPropagation();openAqModal('${esc(i.id)}')">Detalhes</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openAqModal(id){
+  const i=AQUISICOES.find(a=>a.id===id);if(!i)return;
+  const cl=[i.c1,i.c2,i.c3,i.c4,i.c5].filter(v=>v>0);
+  const mn=cl.length?Math.min(...cl):0,mx=cl.length?Math.max(...cl):0;
+  document.getElementById('modal-aq-body').innerHTML=`
+    <div class="modal-tag">${esc(i.processo)} — Item ${i.item}</div>
+    <div class="modal-title">${esc(i.descricao)}</div>
+    <div class="modal-sub">Referência: ${esc(i.ref)} · ${i.qtdTot} unidades</div>
+    <hr class="divider">
+    <div class="exp-grid">
+      <div class="exp-field"><label>Custo Unit. Est.</label><p style="font-size:22px;font-family:var(--font-d);font-weight:800;color:var(--accent)">${R(i.custoUnit)}</p></div>
+      <div class="exp-field"><label>Referência</label><p><span class="badge b-purple">${esc(i.ref)}</span></p></div>
+      <div class="exp-field"><label>Qtd. Inicial</label><p style="font-size:18px;font-family:var(--font-d);font-weight:800">${i.qtdIni} un.</p></div>
+      <div class="exp-field"><label>Qtd. Total</label><p style="font-size:18px;font-family:var(--font-d);font-weight:800">${i.qtdTot} un.</p></div>
+      <div class="exp-field"><label>Custo Inicial Est.</label><p>${R(i.custoIni)}</p></div>
+      <div class="exp-field"><label>Custo Total Est.</label><p style="font-weight:700;color:var(--green);font-size:16px">${R(i.custoTot)}</p></div>
+    </div>
+    <hr class="divider">
+    <div class="exp-section-title">Comparativo de Cotações</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.65rem;margin-top:.5rem">
+      ${cl.map((c,idx)=>`<div style="background:${c===mn?'var(--green-light)':c===mx?'var(--red-light)':'var(--surface)'};border:1px solid ${c===mn?'var(--green-mid)':c===mx?'var(--red-mid)':'var(--border)'};border-radius:var(--r);padding:.8rem">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px;font-weight:600">Cotação ${idx+1} ${c===mn?'<span style="color:var(--green)">✓ Menor</span>':c===mx?'<span style="color:var(--red)">▲ Maior</span>':''}</div>
+        <div style="font-size:17px;font-weight:800;font-family:var(--font-d);color:${c===mn?'var(--green)':c===mx?'var(--red)':'var(--text)'}">${R(c)}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">${i.qtdTot}x = ${R(c*i.qtdTot)}</div>
+      </div>`).join('')}
+    </div>
+    ${cl.length>1?`<div style="margin-top:.85rem;padding:.75rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+      <span style="font-size:12px;color:var(--muted)">Variação: <strong style="color:var(--text2)">${R(mx-mn)}/un.</strong></span>
+      <span style="font-size:12px;color:var(--muted)">Economia c/ menor: <strong style="color:var(--green)">${R((i.custoUnit-mn)*i.qtdTot)}</strong></span>
+    </div>`:''}
+    ${i.obs?`<div style="margin-top:.75rem;padding:.65rem .9rem;background:#fff9eb;border:1px solid var(--amber-mid);border-radius:8px;font-size:12px"><strong>Obs: </strong>${esc(i.obs)}</div>`:''}
+    ${isAdmin?`<hr class="divider"><div style="display:flex;gap:.5rem"><button class="btn btn-ghost" style="font-size:12px" onclick="editarAq('${esc(i.id)}')">✎ Editar</button><button class="btn btn-danger" style="font-size:12px" onclick="deletarAq('${esc(i.id)}')">✕ Excluir</button></div>`:''}`;
+  document.getElementById('modal-aq').classList.add('open');
+}
+
+// ─── DASHBOARD ───
+function renderDash(){
+  if(!ATAS.length&&!AQUISICOES.length)return;
+  const tv=ATAS.reduce((s,i)=>s+i.qtd*i.valorUnit,0);
+  const tc=ATAS.reduce((s,i)=>s+((i.p1||0)+(i.p2||0)+(i.p3||0))*i.valorUnit,0);
+  const te=AQUISICOES.reduce((s,i)=>s+i.custoTot,0);
+  const crit=ATAS.filter(i=>pct(i)>=80&&sl(i)>0).length;
+  const esgo=ATAS.filter(i=>sl(i)<=0).length;
+  document.getElementById('dash-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-accent" style="background:var(--accent)"></div><div class="kpi-label">Valor Total — Atas</div><div class="kpi-value" style="color:var(--accent);font-size:18px">${R(tv)}</div><div class="kpi-sub">${ATAS.length} itens · ${[...new Set(ATAS.map(i=>i.ata))].length} atas</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--amber)"></div><div class="kpi-label">Consumido das Atas</div><div class="kpi-value" style="color:var(--amber);font-size:18px">${R(tc)}</div><div class="kpi-sub">${Math.round(tc/tv*100)}% do total</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--purple)"></div><div class="kpi-label">Estimativa — Aquisições</div><div class="kpi-value" style="color:var(--purple);font-size:18px">${R(te)}</div><div class="kpi-sub">${AQUISICOES.length} itens</div></div>
+    <div class="kpi"><div class="kpi-accent" style="background:var(--red)"></div><div class="kpi-label">Alertas</div><div class="kpi-value" style="color:var(--red)">${crit+esgo}</div><div class="kpi-sub">${crit} críticos · ${esgo} esgotados</div></div>`;
+
+  // Ata cards
+  const am={};
+  ATAS.forEach(i=>{if(!am[i.ata])am[i.ata]={ata:i.ata,empresa:i.empresa,sei:i.sei,validade:i.validade,itens:0,vt:0,cons:0};am[i.ata].itens++;am[i.ata].vt+=i.qtd*i.valorUnit;am[i.ata].cons+=((i.p1||0)+(i.p2||0)+(i.p3||0))*i.valorUnit;});
+  const cols=['#2563eb','#16a34a','#d97706','#7c3aed','#dc2626','#0891b2'];
+  document.getElementById('ata-cards').innerHTML=Object.values(am).map((a,idx)=>{
+    const p=Math.round(a.cons/a.vt*100),c=cols[idx%cols.length];
+    return`<div class="ata-card" style="border-top-color:${c}">
+      <div class="ata-card-header">
+        <div><div class="ata-num">${esc(a.ata)}</div><div class="ata-empresa">${esc(a.empresa.split(' ').slice(0,4).join(' '))}</div><div class="ata-sei">${esc(a.sei)}</div></div>
+        <span class="badge b-gray">${a.itens} it.</span>
+      </div>
+      <div class="ata-prog-label"><span>Consumo</span><span style="color:${c};font-weight:700">${p}%</span></div>
+      <div class="prog-bar" style="height:7px;border-radius:4px"><div class="prog-fill" style="width:${p}%;background:${c};height:100%;border-radius:4px"></div></div>
+      <div style="margin-top:.75rem">
+        <div class="ata-row"><span class="ata-key">Valor total</span><span class="ata-val">${R(a.vt)}</span></div>
+        <div class="ata-row"><span class="ata-key">Consumido</span><span class="ata-val" style="color:${c}">${R(a.cons)}</span></div>
+        <div class="ata-row"><span class="ata-key">Saldo</span><span class="ata-val" style="color:var(--green)">${R(a.vt-a.cons)}</span></div>
+        <div class="ata-row"><span class="ata-key">Validade</span><span class="ata-val" style="font-size:11px;font-weight:400;color:var(--muted)">${esc(a.validade)}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const em={};ATAS.forEach(i=>{if(!em[i.empresa])em[i.empresa]={val:0,cons:0,itens:0};em[i.empresa].val+=i.qtd*i.valorUnit;em[i.empresa].cons+=((i.p1||0)+(i.p2||0)+(i.p3||0))*i.valorUnit;em[i.empresa].itens++;});
+  const el=Object.entries(em).sort((a,b)=>b[1].val-a[1].val);
+  const cl2=ATAS.map(i=>({...i,_p:pct(i),_s:sl(i)})).filter(i=>i._p>=70).sort((a,b)=>b._p-a._p).slice(0,10);
+  document.getElementById('dash-cols').innerHTML=`
+    <div class="dash-card">
+      <div class="dash-card-head">Fornecedores — Ranking</div>
+      <div>${el.map(([nome,d])=>{const p=Math.round(d.cons/d.val*100);return`<div class="dash-item">
+        <div style="flex:1;min-width:0"><div class="dash-item-label" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(nome.split(' ').slice(0,4).join(' '))}</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-top:3px"><div class="prog-bar" style="width:70px"><div class="prog-fill" style="width:${p}%;background:${pcol(p)}"></div></div><span style="font-size:10px;color:var(--muted)">${p}% usado</span></div>
+          <div class="dash-item-sub">${d.itens} item(ns)</div></div>
+        <div class="dash-item-val"><div style="color:var(--accent)">${R(d.val)}</div><div style="font-size:11px;color:var(--muted)">${R(d.cons)} usados</div></div>
+      </div>`;}).join('')}</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-head">Consumo Elevado (&ge;70%)</div>
+      <div>${cl2.length===0?'<div style="padding:2rem;text-align:center;color:var(--muted);font-size:13px">Nenhum item em alerta</div>':cl2.map(i=>{const p=Math.round(i._p),st=stOf(i);return`<div class="dash-item">
+        <div style="flex:1;min-width:0;margin-right:.75rem"><div class="dash-item-label" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(i.material)}</div><div class="dash-item-sub">${esc(i.ata)} · Saldo: ${i._s} un.</div></div>
+        <div style="display:flex;align-items:center;gap:7px"><div class="prog-bar" style="width:55px"><div class="prog-fill" style="width:${p}%;background:${pcol(p)}"></div></div><span class="badge ${st.c}">${p}%</span></div>
+      </div>`;}).join('')}</div>
+    </div>`;
+}
+</script>
+</body>
+</html>

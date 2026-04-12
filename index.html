@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -519,18 +520,26 @@ button.action-btn:hover{background:var(--accent-light);color:var(--accent);borde
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 // ══════════════════════════════════════════════
 //  ⚠️  SEGURANÇA — Altere esta senha antes de publicar
 //  Não coloque a senha em repositório público!
 //  Use uma senha forte: letras, números, símbolos.
 // ══════════════════════════════════════════════
-localStorage.clear(); // limpa config antiga
 const ADMIN_PASSWORD = 'ATAS@2026';  // ← ALTERE AQUI
 
-const CFG_KEY = 'tre_ma_fb_v2';
 let ATAS = [], AQUISICOES = [], db = null, isAdmin = false, useLocal = false;
+
+const FIREBASE_CFG = {
+  apiKey: "AIzaSyCRfNNSNqgrAACapZrwcAayGm1REVEHKQY",
+  authDomain: "tre-ma-atas.firebaseapp.com",
+  databaseURL: "https://tre-ma-atas-default-rtdb.firebaseio.com",
+  projectId: "tre-ma-atas",
+  storageBucket: "tre-ma-atas.firebasestorage.app",
+  messagingSenderId: "112567639381",
+  appId: "1:112567639381:web:6667b688af3df6890823dc"
+};
 
 // ─── DADOS INICIAIS ───
 const ATAS0 = [
@@ -595,10 +604,7 @@ function toast(msg,ok=true){
 // ─── FIREBASE INIT ───
 window.addEventListener('load',()=>{
   document.getElementById('date-chip').textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  const saved=localStorage.getItem(CFG_KEY);
-  if(saved){try{initFirebase(JSON.parse(saved));return;}catch(e){}}
-  document.getElementById('loading-screen').style.display='none';
-  document.getElementById('setup-screen').style.display='block';
+  initFirebase(FIREBASE_CFG);
 });
 
 function saveConfig(){
@@ -627,25 +633,55 @@ function useLocalMode(){
 
 function initFirebase(cfg){
   try{
-    const app=firebase.initializeApp(cfg);
-    db=firebase.firestore(app);
-    let aL=false,qL=false;
-    function chk(){if(aL&&qL){document.getElementById('loading-screen').style.display='none';startApp();}}
-    db.collection('atas').onSnapshot(snap=>{
-      if(snap.empty&&!aL){const b=db.batch();ATAS0.forEach(d=>b.set(db.collection('atas').doc(),d));b.commit();}
-      ATAS=snap.docs.map(d=>({...d.data(),id:d.id}));aL=true;
-      if(document.getElementById('app').style.display!=='none')refreshAll();chk();
-    },()=>useLocalMode());
-    db.collection('aquisicoes').onSnapshot(snap=>{
-      if(snap.empty&&!qL){const b=db.batch();AQ0.forEach(d=>b.set(db.collection('aquisicoes').doc(),d));b.commit();}
-      AQUISICOES=snap.docs.map(d=>({...d.data(),id:d.id}));qL=true;
-      if(document.getElementById('app').style.display!=='none')refreshAll();chk();
-    },()=>{});
+    const app = firebase.initializeApp(cfg);
+    db = firebase.database(app);
+    let aL=false, qL=false;
+
+    function chk(){
+      if(aL&&qL){
+        document.getElementById('loading-screen').style.display='none';
+        document.getElementById('sync-label').textContent='Tempo Real ✓';
+        startApp();
+      }
+    }
+
+    // Escuta atas
+    db.ref('atas').on('value', snap=>{
+      const val = snap.val();
+      if(!val){
+        // Banco vazio: sobe dados iniciais
+        db.ref('atas').set(ATAS0.reduce((acc,d,i)=>{acc['a'+i]=d;return acc;},{}));
+        ATAS = ATAS0.map((d,i)=>({...d,id:'a'+i}));
+      } else {
+        ATAS = Object.entries(val).map(([id,d])=>({...d,id}));
+      }
+      aL=true;
+      if(document.getElementById('app').style.display!=='none') refreshAll();
+      chk();
+    }, err=>{
+      console.error('Firebase atas error:',err);
+      useLocalMode();
+    });
+
+    // Escuta aquisições
+    db.ref('aquisicoes').on('value', snap=>{
+      const val = snap.val();
+      if(!val){
+        db.ref('aquisicoes').set(AQ0.reduce((acc,d,i)=>{acc['q'+i]=d;return acc;},{}));
+        AQUISICOES = AQ0.map((d,i)=>({...d,id:'q'+i}));
+      } else {
+        AQUISICOES = Object.entries(val).map(([id,d])=>({...d,id}));
+      }
+      qL=true;
+      if(document.getElementById('app').style.display!=='none') refreshAll();
+      chk();
+    }, err=>{
+      console.error('Firebase aquisicoes error:',err);
+    });
+
   }catch(e){
-    localStorage.removeItem(CFG_KEY);
-    document.getElementById('loading-screen').style.display='none';
-    document.getElementById('setup-screen').style.display='block';
-    alert('Erro Firebase: '+e.message);
+    console.error('Erro Firebase:',e);
+    useLocalMode();
   }
 }
 
@@ -686,11 +722,21 @@ function switchAdminTab(n,btn){
 async function salvarAta(){
   const d={sei:document.getElementById('fa-sei').value.trim(),empresa:document.getElementById('fa-empresa').value.trim(),ata:document.getElementById('fa-ata').value.trim(),validade:document.getElementById('fa-validade').value.trim(),material:document.getElementById('fa-material').value.trim(),qtd:Number(document.getElementById('fa-qtd').value)||0,valorUnit:Number(document.getElementById('fa-valorUnit').value)||0,p1:Number(document.getElementById('fa-p1').value)||0,p2:Number(document.getElementById('fa-p2').value)||0,p3:Number(document.getElementById('fa-p3').value)||0,obs:document.getElementById('fa-obs').value.trim()};
   if(!d.material||!d.qtd){toast('Preencha material e quantidade',false);return;}
-  try{if(useLocal){ATAS.push({...d,id:'l'+Date.now()});refreshAll();}else await db.collection('atas').add(d);toast('Item salvo!');['fa-sei','fa-empresa','fa-ata','fa-validade','fa-material','fa-obs'].forEach(id=>document.getElementById(id).value='');['fa-qtd','fa-valorUnit','fa-p1','fa-p2','fa-p3'].forEach(id=>document.getElementById(id).value='0');}catch(e){toast('Erro: '+e.message,false);}
+  try{
+    if(useLocal){ATAS.push({...d,id:'l'+Date.now()});refreshAll();}
+    else{const newRef=db.ref('atas').push();await newRef.set(d);}
+    toast('Item salvo!');
+    ['fa-sei','fa-empresa','fa-ata','fa-validade','fa-material','fa-obs'].forEach(id=>document.getElementById(id).value='');
+    ['fa-qtd','fa-valorUnit','fa-p1','fa-p2','fa-p3'].forEach(id=>document.getElementById(id).value='0');
+  }catch(e){toast('Erro: '+e.message,false);}
 }
 async function deletarAta(id){
   if(!confirm('Excluir este item?'))return;
-  try{if(useLocal){ATAS=ATAS.filter(i=>i.id!==id);refreshAll();renderAdminLists();}else await db.collection('atas').doc(id).delete();toast('Excluído');}catch(e){toast('Erro',false);}
+  try{
+    if(useLocal){ATAS=ATAS.filter(i=>i.id!==id);refreshAll();renderAdminLists();}
+    else await db.ref('atas/'+id).remove();
+    toast('Excluído');
+  }catch(e){toast('Erro',false);}
 }
 function editarAta(id){
   const i=ATAS.find(a=>a.id===id);if(!i)return;
@@ -702,18 +748,33 @@ function editarAta(id){
 async function updateAta(){
   const id=document.getElementById('edit-ata-id').value;
   const d={sei:document.getElementById('edit-fa-sei').value.trim(),empresa:document.getElementById('edit-fa-empresa').value.trim(),ata:document.getElementById('edit-fa-ata').value.trim(),validade:document.getElementById('edit-fa-validade').value.trim(),material:document.getElementById('edit-fa-material').value.trim(),qtd:Number(document.getElementById('edit-fa-qtd').value)||0,valorUnit:Number(document.getElementById('edit-fa-valorUnit').value)||0,p1:Number(document.getElementById('edit-fa-p1').value)||0,p2:Number(document.getElementById('edit-fa-p2').value)||0,p3:Number(document.getElementById('edit-fa-p3').value)||0,obs:document.getElementById('edit-fa-obs').value.trim()};
-  try{if(useLocal){const x=ATAS.findIndex(a=>a.id===id);if(x>=0)ATAS[x]={...d,id};refreshAll();renderAdminLists();}else await db.collection('atas').doc(id).update(d);document.getElementById('modal-edit-ata').classList.remove('open');toast('Atualizado!');}catch(e){toast('Erro',false);}
+  try{
+    if(useLocal){const x=ATAS.findIndex(a=>a.id===id);if(x>=0)ATAS[x]={...d,id};refreshAll();renderAdminLists();}
+    else await db.ref('atas/'+id).update(d);
+    document.getElementById('modal-edit-ata').classList.remove('open');
+    toast('Atualizado!');
+  }catch(e){toast('Erro',false);}
 }
 
 // ─── CRUD AQ ───
 async function salvarAq(){
   const d={processo:document.getElementById('faq-processo').value.trim(),item:Number(document.getElementById('faq-item').value)||0,descricao:document.getElementById('faq-descricao').value.trim(),c1:Number(document.getElementById('faq-c1').value)||0,c2:Number(document.getElementById('faq-c2').value)||0,c3:Number(document.getElementById('faq-c3').value)||0,c4:Number(document.getElementById('faq-c4').value)||0,c5:Number(document.getElementById('faq-c5').value)||0,ref:document.getElementById('faq-ref').value,custoUnit:Number(document.getElementById('faq-custoUnit').value)||0,qtdIni:Number(document.getElementById('faq-qtdIni').value)||0,qtdTot:Number(document.getElementById('faq-qtdTot').value)||0,custoIni:Number(document.getElementById('faq-custoIni').value)||0,custoTot:Number(document.getElementById('faq-custoTot').value)||0,obs:document.getElementById('faq-obs').value.trim()};
   if(!d.descricao||!d.processo){toast('Preencha processo e descrição',false);return;}
-  try{if(useLocal){AQUISICOES.push({...d,id:'l'+Date.now()});refreshAll();}else await db.collection('aquisicoes').add(d);toast('Aquisição salva!');['faq-processo','faq-descricao','faq-obs'].forEach(id=>document.getElementById(id).value='');['faq-item','faq-c1','faq-c2','faq-c3','faq-c4','faq-c5','faq-custoUnit','faq-qtdIni','faq-qtdTot','faq-custoIni','faq-custoTot'].forEach(id=>document.getElementById(id).value='0');}catch(e){toast('Erro',false);}
+  try{
+    if(useLocal){AQUISICOES.push({...d,id:'l'+Date.now()});refreshAll();}
+    else{const newRef=db.ref('aquisicoes').push();await newRef.set(d);}
+    toast('Aquisição salva!');
+    ['faq-processo','faq-descricao','faq-obs'].forEach(id=>document.getElementById(id).value='');
+    ['faq-item','faq-c1','faq-c2','faq-c3','faq-c4','faq-c5','faq-custoUnit','faq-qtdIni','faq-qtdTot','faq-custoIni','faq-custoTot'].forEach(id=>document.getElementById(id).value='0');
+  }catch(e){toast('Erro',false);}
 }
 async function deletarAq(id){
   if(!confirm('Excluir?'))return;
-  try{if(useLocal){AQUISICOES=AQUISICOES.filter(i=>i.id!==id);refreshAll();renderAdminLists();}else await db.collection('aquisicoes').doc(id).delete();toast('Excluído');}catch(e){toast('Erro',false);}
+  try{
+    if(useLocal){AQUISICOES=AQUISICOES.filter(i=>i.id!==id);refreshAll();renderAdminLists();}
+    else await db.ref('aquisicoes/'+id).remove();
+    toast('Excluído');
+  }catch(e){toast('Erro',false);}
 }
 function editarAq(id){
   const i=AQUISICOES.find(a=>a.id===id);if(!i)return;
@@ -726,7 +787,12 @@ function editarAq(id){
 async function updateAq(){
   const id=document.getElementById('edit-aq-id').value;
   const d={processo:document.getElementById('edit-faq-processo').value.trim(),item:Number(document.getElementById('edit-faq-item').value)||0,descricao:document.getElementById('edit-faq-descricao').value.trim(),c1:Number(document.getElementById('edit-faq-c1').value)||0,c2:Number(document.getElementById('edit-faq-c2').value)||0,c3:Number(document.getElementById('edit-faq-c3').value)||0,ref:document.getElementById('edit-faq-ref').value,custoUnit:Number(document.getElementById('edit-faq-custoUnit').value)||0,qtdIni:Number(document.getElementById('edit-faq-qtdIni').value)||0,qtdTot:Number(document.getElementById('edit-faq-qtdTot').value)||0,custoIni:Number(document.getElementById('edit-faq-custoIni').value)||0,custoTot:Number(document.getElementById('edit-faq-custoTot').value)||0,obs:document.getElementById('edit-faq-obs').value.trim()};
-  try{if(useLocal){const x=AQUISICOES.findIndex(a=>a.id===id);if(x>=0)AQUISICOES[x]={...d,id};refreshAll();renderAdminLists();}else await db.collection('aquisicoes').doc(id).update(d);document.getElementById('modal-edit-aq').classList.remove('open');toast('Atualizado!');}catch(e){toast('Erro',false);}
+  try{
+    if(useLocal){const x=AQUISICOES.findIndex(a=>a.id===id);if(x>=0)AQUISICOES[x]={...d,id};refreshAll();renderAdminLists();}
+    else await db.ref('aquisicoes/'+id).update(d);
+    document.getElementById('modal-edit-aq').classList.remove('open');
+    toast('Atualizado!');
+  }catch(e){toast('Erro',false);}
 }
 
 function renderAdminLists(){

@@ -1,6 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- CORREÇÃO APLICADA: Migração do Firebase Dynamic Links para Firebase Hosting para evitar erro 404 -->
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Atas & Aquisições — TRE-MA</title>
@@ -773,7 +776,7 @@ let ATAS = [], AQUISICOES = [], SERVICOS = [], HISTORICO = [], db = null, auth =
 
 const FIREBASE_CFG = {
   apiKey: "AIzaSyCRfNNSNqgrAACapZrwcAayGm1REVEHKQY",
-  authDomain: "tre-ma-atas.firebaseapp.com",
+  authDomain: "atas-tre-ma.firebaseapp.com",
   databaseURL: "https://tre-ma-atas-default-rtdb.firebaseio.com",
   projectId: "tre-ma-atas",
   storageBucket: "tre-ma-atas.firebasestorage.app",
